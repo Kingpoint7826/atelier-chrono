@@ -22,7 +22,7 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Generate Native Android Scaffolding
+      - name: Generate Scaffolding & Fix JVM Target
         run: |
           mkdir -p temp_backup
           cp -r android temp_backup/ || true
@@ -30,6 +30,9 @@ jobs:
           if [ -d "temp_backup/android/app/src/main" ]; then
             cp -r temp_backup/android/app/src/main/* android/app/src/main/ || true
           fi
+          
+          # Force JVM target compatibility across Java and Kotlin
+          echo "kotlin.jvm.target.validation.mode = ignore" >> android/gradle.properties
 
       - name: Install dependencies
         run: flutter pub get
@@ -42,4 +45,3 @@ jobs:
         with:
           name: Atelier-Chrono-APK
           path: build/app/outputs/flutter-apk/app-release.apk
-
