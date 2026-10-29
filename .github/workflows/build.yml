@@ -14,13 +14,22 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: '17'
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+
+      - name: Generate Native Android Scaffolding
+        run: |
+          mkdir -p temp_backup
+          cp -r android temp_backup/ || true
+          flutter create --platforms=android .
+          if [ -d "temp_backup/android/app/src/main" ]; then
+            cp -r temp_backup/android/app/src/main/* android/app/src/main/ || true
+          fi
 
       - name: Install dependencies
         run: flutter pub get
@@ -33,3 +42,4 @@ jobs:
         with:
           name: Atelier-Chrono-APK
           path: build/app/outputs/flutter-apk/app-release.apk
+
